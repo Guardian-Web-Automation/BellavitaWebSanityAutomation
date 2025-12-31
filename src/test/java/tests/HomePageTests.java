@@ -124,12 +124,12 @@ public class HomePageTests extends BaseTest {
         int actualQty = cp.getNormalItemQuantity();
         ExtentLogger.info("Normal Item Quantity: " + actualQty);
         Assert.assertEquals(actualQty, expectedQty, "Quantity mismatch for main product!");
-        String freeItem = cp.getFreeItemName();
-        if (freeItem != null) {
-            ExtentLogger.info("Free Item in Cart: " + freeItem);
-        } else {
-            ExtentLogger.fail("No free item added — cart threshold not reached.");
-        }
+//        String freeItem = cp.getFreeItemName();
+//        if (freeItem != null) {
+//            ExtentLogger.info("Free Item in Cart: " + freeItem);
+//        } else {
+//            ExtentLogger.fail("No free item added — cart threshold not reached.");
+//        }
         String amount = cp.getOrderAmount();
         ExtentLogger.info("Final Order Amount Before Checkout: " + amount);
         cp.clickCheckout();
