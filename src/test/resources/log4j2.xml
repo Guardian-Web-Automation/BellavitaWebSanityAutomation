@@ -2,14 +2,25 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss} %-5level %c{1} - %msg%n"/>
+            <!-- Simplified console pattern: time, level and message -->
+            <PatternLayout pattern="%d{HH:mm:ss} %-5p - %m%n"/>
         </Console>
         <File name="FileLog" fileName="target/test.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %c - %msg%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p - %m%n"/>
         </File>
     </Appenders>
 
     <Loggers>
+        <!-- Reduce noise from third-party libraries -->
+        <Logger name="org.openqa.selenium" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileLog"/>
+        </Logger>
+        <Logger name="io.github.bonigarcia" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileLog"/>
+        </Logger>
+
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileLog"/>

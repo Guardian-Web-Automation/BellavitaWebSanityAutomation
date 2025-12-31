@@ -18,6 +18,16 @@ public class TestData {
         };
     }
 
+    @DataProvider(name = "crazyDealName")
+    public Object[][] crazyDealName() {
+        return new Object[][] {
+                {"Ultimate Perfume Box"},
+                {"Daily Care Kit"},
+                {"Gift Set Party"}
+
+        };
+    }
+
     @DataProvider(name = "PerfumesSubCategoryData")
     public Object[][] getPerfumeSubCategoryData() {
         return new Object[][] {
@@ -79,4 +89,13 @@ public class TestData {
                 {"CEO", 5}
         };
     }
+
+    @DataProvider(name = "CategoryAndProduct")
+    public Object[][] getCategoryAndProduct() {
+        return new Object[][] {
+                {"BESTSELLERS", "CEO Man Perfume - 100ml"},
+                {"NEW ARRIVALS", "Tinted Lip Balm SPF 20 | Strawberry - 10ml"}
+        };
+    }
+
 }

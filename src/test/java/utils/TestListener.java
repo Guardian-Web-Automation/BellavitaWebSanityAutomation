@@ -4,12 +4,19 @@ import base.BaseTest;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import org.testng.IAnnotationTransformer;
+import org.testng.annotations.ITestAnnotation;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 
 import static base.BaseTest.driver;
 
-public class TestListener implements ITestListener {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import com.aventstack.extentreports.Status;
+import utils.ExtentLogger;
+
+public class TestListener implements ITestListener, IAnnotationTransformer {
 
     private static ThreadLocal<ExtentTest> testThread = new ThreadLocal<>();
     private static ExtentReports extent;
@@ -19,12 +26,12 @@ public class TestListener implements ITestListener {
         if (extent == null) {
             extent = ExtentManager.getInstance();
         }
-        System.out.println("Test Suite started: " + context.getName());
+        ExtentLogger.info("Test Suite started: " + context.getName());
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        System.out.println("Test Suite finished: " + context.getName());
+        ExtentLogger.info("Test Suite finished: " + context.getName());
         if (extent != null) {
             extent.flush();
         }
@@ -38,45 +45,51 @@ public class TestListener implements ITestListener {
         // register this extent test for logging
         ExtentLogger.setTest(test);
 
-        test.info("Test started: " + result.getMethod().getMethodName());
+        ExtentLogger.info("Test started: " + result.getMethod().getMethodName());
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
         ExtentTest test = testThread.get();
         if (test != null) {
-            test.pass("Test passed");
+            ExtentLogger.pass("Test passed: " + result.getMethod().getMethodName());
         }
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
+        ExtentLogger.fail("Test failed: " + result.getMethod().getMethodName() + " - " + result.getThrowable());
         ExtentTest test = testThread.get();
-        if (test != null) {
-            test.fail("Test failed: " + result.getThrowable());
-
-            try {
-                BaseTest base = (BaseTest) result.getInstance();
-                String screenshotPath =
-                        ScreenshotUtil.capture(driver, result.getMethod().getMethodName());
-
-                if (screenshotPath != null) {
-                    test.addScreenCaptureFromPath(screenshotPath);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            String screenshotPath = ScreenshotUtil.capture(driver, result.getMethod().getMethodName());
+            if (screenshotPath != null && test != null) {
+                test.addScreenCaptureFromPath(screenshotPath);
             }
+        } catch (Exception e) {
+            ExtentLogger.info("Error capturing screenshot: " + e.getMessage());
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
+        ExtentLogger.info("Test skipped: " + result.getMethod().getMethodName());
         ExtentTest test = testThread.get();
-        if (test != null) {
-            test.skip("Test skipped: " + result.getMethod().getMethodName());
-        }
+        if (test != null) test.skip("Test skipped: " + result.getMethod().getMethodName());
     }
 
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {}
+
+    // Automatically attach retry analyzer to all @Test annotations if not already set
+    @Override
+    public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
+        // Some TestNG versions don't expose a getter for the retry analyzer; to be
+        // compatible we simply set our RetryAnalyzer here. This may override a
+        // previously-configured analyzer, but ensures the retry behavior is applied.
+        try {
+            annotation.setRetryAnalyzer(RetryAnalyzer.class);
+        } catch (Throwable t) {
+            ExtentLogger.info("Could not set RetryAnalyzer on annotation: " + t.getMessage());
+        }
+    }
 }

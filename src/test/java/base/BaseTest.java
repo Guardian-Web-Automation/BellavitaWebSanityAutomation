@@ -29,16 +29,32 @@ public class BaseTest {
     public void setUp(){
         WebDriverManager.chromedriver().setup();
         driver= new ChromeDriver();
+        LOGGER.info("Launched ChromeDriver instance");
         driver.manage().window().maximize();
-//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        // set page load timeout and small implicit wait as safety net for legacy operations
+        try {
+            driver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(30));
+            driver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(5));
+            driver.manage().timeouts().scriptTimeout(java.time.Duration.ofSeconds(20));
+        } catch (Exception ignored) {}
+
+        // start from a clean session
+        try { driver.manage().deleteAllCookies(); } catch (Exception ignored) {}
+
         driver.get("https://bellavitaorganic.com/");
+        LOGGER.info("Navigated to base URL");
 
     }
 
     @AfterMethod
     public void tearUp(){
         if(driver!=null){
-//            driver.quit();
+            // ensure browser is closed after each test
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                LOGGER.warn("Error quitting WebDriver: {}", e.getMessage());
+            }
         }
     }
 

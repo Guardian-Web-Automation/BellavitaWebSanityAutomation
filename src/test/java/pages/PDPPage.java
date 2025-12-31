@@ -11,13 +11,12 @@ public class PDPPage extends BasePage {
     private By qtyDecreaseBtn = By.xpath("//button[contains(@class,'quantity__button') and @name='minus']");
     private By qtyInput = By.xpath("//input[@id='Quantity-buy_buttons' and @class='quantity__input']");
     private By addToCartBtn = By.cssSelector("button[name='add']");
-
-
+    private By cartCheckoutBtn = By.xpath("//button[@onclick='onCheckoutClick(this)']");
+    private By addToCartBtnLocator = By.xpath("//button[@name='add']");
 
     public PDPPage(WebDriver driver) {
         super(driver);
     }
-
 
     public void setQuantity(int targetQty) {
         ExtentLogger.info("Setting quantity to: " + targetQty);
@@ -29,11 +28,9 @@ public class PDPPage extends BasePage {
         ExtentLogger.info("Current quantity: " + currentQty);
 
         while (currentQty != targetQty) {
-
             if (currentQty < targetQty) {
                 wait.until(ExpectedConditions.elementToBeClickable(qtyIncreaseBtn)).click();
-            }
-            else {
+            } else {
                 wait.until(ExpectedConditions.elementToBeClickable(qtyDecreaseBtn)).click();
             }
 
@@ -61,9 +58,38 @@ public class PDPPage extends BasePage {
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addBtn);
         }
 
+        // Wait until checkout button appears in cart (product successfully added)
+        try {
+            wait.until(ExpectedConditions.or(
+                    ExpectedConditions.visibilityOfElementLocated(cartCheckoutBtn),
+                    ExpectedConditions.elementToBeClickable(cartCheckoutBtn)
+            ));
+        } catch (TimeoutException te) {
+            ExtentLogger.fail("Checkout button did not appear after adding to cart.");
+            Assert.fail("Checkout button did not appear after adding to cart.");
+        }
+
         ExtentLogger.info("Product added to cart successfully!");
     }
 
+    public void addToCartFromPDP() {
+        try {
+            ExtentLogger.info("Waiting for Add to Cart button on PDP");
+            WebElement addToCartButton = wait.until(ExpectedConditions.elementToBeClickable(addToCartBtnLocator));
 
+            // Scroll into view (important for PDPs)
+            scrollToElement(driver, addToCartButton);
+            addToCartButton.click();
+            ExtentLogger.pass("Clicked on Add to Cart button from PDP successfully");
+
+        } catch (TimeoutException e) {
+            ExtentLogger.fail("❌ Add to Cart button not clickable within timeout on PDP");
+            throw e;
+
+        } catch (Exception e) {
+            ExtentLogger.fail("❌ Failed to click Add to Cart button on PDP: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
 }
