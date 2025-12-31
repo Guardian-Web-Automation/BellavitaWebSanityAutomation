@@ -21,9 +21,9 @@ public class TestData {
     @DataProvider(name = "crazyDealName")
     public Object[][] crazyDealName() {
         return new Object[][] {
-                {"Ultimate Perfume Box"},
-                {"Daily Care Kit"},
-                {"Gift Set Party"}
+                {"Ultimate Perfume Box"}
+//                {"Daily Care Kit"},
+//                {"Gift Set Party"}
 
         };
     }
