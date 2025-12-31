@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Run Maven Tests
-        run: mvn clean test
+        run: mvn clean test -Dheadless=true
 
       - name: Upload Extent Report
         if: always()
@@ -30,3 +30,27 @@ jobs:
         with:
           name: Automation-Report
           path: reports/
+
+      - name: Notify Slack
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "text": "🚀 Bellavita Automation Run Completed\nStatus: ${{ job.status }}\nRepo: ${{ github.repository }}\nRun URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }' ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Send Email
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Bellavita Automation Report - ${{ job.status }}
+          body: |
+            Automation execution completed.
+            Status: ${{ job.status }}
+            Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: gourav.kumar@oneguardian.in
+          from: Automation Bot
