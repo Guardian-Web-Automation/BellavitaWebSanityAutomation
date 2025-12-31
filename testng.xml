@@ -9,8 +9,8 @@
 
     <test name="Crazy Deals Tests">
         <classes>
-<!--            <class name="tests.CrazyDealsTests"/>-->
-            <class name="tests.HomePageTests"/>
+            <class name="tests.CrazyDealsTests"/>
+<!--            <class name="tests.HomePageTests"/>-->
 <!--            <class name="tests.CartTests"/>-->
         </classes>
     </test>
