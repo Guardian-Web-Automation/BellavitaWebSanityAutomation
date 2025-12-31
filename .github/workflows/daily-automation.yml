@@ -1,4 +1,4 @@
-name: Bellavita Daily Automation
+name: BVO_Web Daily Sanity Script Automation
 
 on:
   schedule:
@@ -22,6 +22,8 @@ jobs:
           java-version: '17'
 
       - name: Run Maven Tests
+        env:
+          TZ: Asia/Kolkata
         run: mvn clean test -Dheadless=true
 
       - name: Upload Extent Report
@@ -31,13 +33,13 @@ jobs:
           name: Extent-Automation-Report
           path: reports/
 
-#      - name: Notify Slack
-#        if: always()
-#        run: |
-#          curl -X POST -H "Content-type: application/json" \
-#          --data "{
-#            \"text\": \"🚀 *Bellavita Automation Run Completed*\n\n*Status:* ${{ job.status }}\n*Repo:* ${{ github.repository }}\n*Run URL:* https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n*Extent Report:* Download from Artifacts section\"
-#          }" ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notify Slack
+        if: always()
+        run: |
+          curl -X POST -H "Content-type: application/json" \
+          --data "{
+            \"text\": \"🚀 *Bellavita Automation Run Completed*\n\n*Status:* ${{ job.status }}\n*Repo:* ${{ github.repository }}\n*Run URL:* https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n*Extent Report:* Download from Artifacts section\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
       
 
       
