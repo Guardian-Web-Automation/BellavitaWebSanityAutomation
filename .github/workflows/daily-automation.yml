@@ -39,18 +39,4 @@ jobs:
             "text": "🚀 Bellavita Automation Run Completed\nStatus: ${{ job.status }}\nRepo: ${{ github.repository }}\nRun URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           }' ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      - name: Send Email
-        if: always()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Bellavita Automation Report - ${{ job.status }}
-          body: |
-            Automation execution completed.
-            Status: ${{ job.status }}
-            Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          to: gourav.kumar@oneguardian.in
-          from: Automation Bot
+      
