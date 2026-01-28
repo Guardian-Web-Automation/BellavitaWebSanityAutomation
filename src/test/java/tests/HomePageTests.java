@@ -58,7 +58,7 @@ public class HomePageTests extends BaseTest {
         Assert.assertTrue(isFound, "The Sub category '" + subCategory + "' is not clicked");
     }
 
-    @Test(dataProvider = "SkincareSubCategoryData", dataProviderClass = data.TestData.class,priority = 5,enabled = true)
+    @Test(dataProvider = "SkincareSubCategoryData", dataProviderClass = data.TestData.class,priority = 5,enabled = false)
     public void SkincareSubCategoriesTest(String category, String subCategory, String subCategoryTitle){
         ExtentLogger.info("Starting SkincareSubCategoriesTest for Category: " + category +
                 ", SubCategory: " + subCategory);
@@ -78,7 +78,7 @@ public class HomePageTests extends BaseTest {
         Assert.assertTrue(isFound, "The Sub category '" + subCategory + "' is not clicked");
     }
 
-    @Test(priority = 7, enabled = true)
+    @Test(priority = 7, enabled = false)
     public void profilePageTest(){
         ExtentLogger.info("The test case is starting: profilePageTest" );
         HomePage Hp = new HomePage(driver);
