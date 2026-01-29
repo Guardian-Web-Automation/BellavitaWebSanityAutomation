@@ -19,6 +19,7 @@ public class HomePageTests extends BaseTest {
     public void titleValidationtest(){
         HomePage Hp = new HomePage(driver);
         String pageTitle= Hp.checkTitleOfPage();
+        System.out.println(pageTitle);
         Assert.assertTrue(pageTitle.contains("Buy Luxury Perfume for Men and Women"),
                 "Expected page title is not correct:"+pageTitle);
     }
