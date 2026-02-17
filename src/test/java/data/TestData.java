@@ -94,7 +94,7 @@ public class TestData {
     public Object[][] getCategoryAndProduct() {
         return new Object[][] {
                 {"BESTSELLERS", "CEO Man Perfume - 100ml"},
-                {"NEW ARRIVALS", "Tinted Lip Balm SPF 20 | Strawberry - 10ml"}
+                {"NEW ARRIVALS", "Final Touch Makeup Fixer"}
         };
     }
 
